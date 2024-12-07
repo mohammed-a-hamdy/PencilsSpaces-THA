@@ -1,4 +1,8 @@
 describe('Integration test for Pencil App', () => {
+  before(() => {
+    cy.clearAppData();
+    cy.login('m.ahmed94dev@gmail.com', 'ahah444ola');
+  })
   // Common functions
   const visitPencilApp = () => {
     cy.visit('https://my.pencilapp.com/');
@@ -10,10 +14,6 @@ describe('Integration test for Pencil App', () => {
 
   // Login and Authentication
   describe('Authentication', () => {
-    before(() => {
-      cy.clearAppData();
-      cy.login('m.ahmed94dev@gmail.com', 'ahah444ola');
-    })
     it('Verify login under 1000ms', () => {
       visitPencilApp();
       cy.get('app-spaces-list', { timeout: 1000 }).should('be.visible');
@@ -32,11 +32,6 @@ describe('Integration test for Pencil App', () => {
 
   // Home Page
   describe('Home Page', () => {
-    before(() => {
-      cy.clearAppData();
-      cy.login('m.ahmed94dev@gmail.com', 'ahah444ola');
-  
-    })
     it('Verify spaces list is eq 1', () => {
       visitPencilApp();
       cy.get('app-spaces-list').should('be.visible');
@@ -64,6 +59,8 @@ describe('Integration test for Pencil App', () => {
     it.only('Enter First Space and Draw', () => {
       visitPencilApp();
       enterSpace();
+      cy.get('button').contains('zoom_in').click();
+      cy.get('button').contains('fit_screen').click();
       cy.get('button').contains('Shapes').should('be.visible').click();
       cy.get('button[data-name="space-toolbar-button-object-line"]').click();
 
@@ -87,7 +84,27 @@ describe('Integration test for Pencil App', () => {
         .trigger('mousedown', { which: 2 })
         .trigger('mouseup', { force: true });
       cy.get('.upper-canvas.fabric-canvas').click(15, 40, { force: true });
+
+
       cy.get('button').contains('Select').should('be.visible').click();
+      cy.get('.upper-canvas.fabric-canvas').trigger('mousedown', {
+        clientX: 960,
+        clientY: 0,
+        force: true
+      });
+      cy.wait(1000);
+      cy.get('.upper-canvas.fabric-canvas')
+        .trigger('mousedown', { which: 1 })
+        .trigger('mousemove', {
+          clientX: 960,
+          clientY: 50,
+          force: true
+        });
+      cy.get('.upper-canvas.fabric-canvas')
+        .trigger('mouseup', { force: true });
+      cy.wait(1000);
+      cy.get('body').type('{rightarrow}');
+
 
     });
 
